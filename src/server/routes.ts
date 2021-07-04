@@ -11,17 +11,15 @@ router.get('/api/hello', (req, res, next) => {
     res.json('World');
 });
 
-router.post('/api/client/createclient', function(req, res){
+router.post('/api/client/createclient', async (req, res, next) => {
     let clientname = req.body.name;
     try{
-        DB.client.createclient(clientname);
+        DB.client.createClient(clientname);
         res.json(`${clientname} has been created`);
     }catch(e) {
         console.log(e);
         res.sendStatus(500);
     } 
 });
-
-
 
 export default router;
