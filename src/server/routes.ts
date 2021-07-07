@@ -12,10 +12,15 @@ router.get('/api/hello', (req, res, next) => {
 });
 
 router.post('/api/client/createclient', async (req, res, next) => {
-    let clientname = req.body.name;
     try{
-        DB.client.createClient(clientname);
-        res.json(`${clientname} has been created`);
+        let clientName = req.body.name;
+        let doesClientExist = await DB.client.isClientNameIsAlreadyInDatabase(clientName);
+        if(Object.keys(doesClientExist).length == 0){
+            DB.client.createClient(clientName);
+            res.json(`${clientName} has been created`);
+        }else{
+            res.json(`${clientName} already exist`);
+        }
     }catch(e) {
         console.log(e);
         res.sendStatus(500);
