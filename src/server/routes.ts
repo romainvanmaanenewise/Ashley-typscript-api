@@ -16,15 +16,22 @@ router.post('/api/client/createclient', async (req, res, next) => {
         let clientName = req.body.name;
         let doesClientExist = await DB.client.isClientNameIsAlreadyInDatabase(clientName);
         if(Object.keys(doesClientExist).length == 0){
-            DB.client.createClient(clientName);
-            res.json(`${clientName} has been created`);
+            let result = await DB.client.createClient(clientName);
+            const ResultOfCreateClientRequest: theResultOfCreateClientRequest = {clientId:result['insertId'] , resultType:'created'} 
+            res.json(ResultOfCreateClientRequest);
         }else{
-            res.json(`${clientName} already exist`);
+            const ResultOfCreateClientRequest: theResultOfCreateClientRequest = {clientId:doesClientExist[0]["id"] , resultType:'exists'} 
+            res.json(ResultOfCreateClientRequest);
         }
     }catch(e) {
         console.log(e);
         res.sendStatus(500);
     } 
 });
+
+interface theResultOfCreateClientRequest {
+    clientId: number;
+    resultType: string;
+}
 
 export default router;
